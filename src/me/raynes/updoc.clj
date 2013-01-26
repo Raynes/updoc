@@ -1,5 +1,5 @@
 (ns me.raynes.updoc
-  (:require [com.geni.updoc.email :refer [send-email email get-issues]]
+  (:require [me.raynes.updoc.email :refer [send-email email get-issues]]
             [clojure.tools.cli :refer [cli]]
             [me.raynes.fs :refer [temp-file]])
   (:gen-class))

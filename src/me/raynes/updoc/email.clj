@@ -6,24 +6,23 @@
             [postal.core :as mail])
   (:require [me.raynes.laser :as l :refer [defdocument]]))
 
-(defn section [email]
+(defn section [email node]
   (let [body (:body email)]
-    (l/node :div
-            :content (into
-                      [(l/node :h2 :content (:title email))]
-                      (l/nodes (to-html (if (seq body)
-                                          body
-                                          "This issue has no description.")
-                                        [:fenced-code-blocks
-                                         :hardwraps
-                                         :autolinks]))))))
+    (assoc node :content (into
+                          [(l/node :h2 :content (:title email))]
+                          (l/nodes (to-html (if (seq body)
+                                              body
+                                              "This issue has no description.")
+                                            [:fenced-code-blocks
+                                             :hardwraps
+                                             :autolinks]))))))
 
 (defdocument email
   (resource "email.html")
   [emails]
-  (l/element= :div) (l/replace
+  (l/element= :div) (fn [node]
                      (for [email emails]
-                       (section email))))
+                       (section email node))))
 
 (defn get-issues [user repo milestone auth]
   (let [milestone (-> (filter (comp #{milestone} :title)

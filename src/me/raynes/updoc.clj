@@ -17,7 +17,7 @@
 (defn arguments [args]
   (cli args
        ["-p" "--preview" "Create a temp file with the email content." :flag true]
-       ["-h" "--help" "Show help." :default true :flag true]))
+       ["-h" "--help" "Show help." :flag true]))
 
 (defn -main [& args]
   (let [[options args banner] (arguments args) 

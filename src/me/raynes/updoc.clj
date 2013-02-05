@@ -14,20 +14,25 @@
            (-> (System/console) (.readPassword) (String.))
            (read-line))))))
 
+(defn arguments [args]
+  (cli args
+       ["-p" "--preview" "Create a temp file with the email content." :flag true]
+       ["-h" "--help" "Show help." :default true :flag true]))
+
 (defn -main [& args]
-  (let [[options args] (cli args ["-p" "--preview" "Create a temp file with the email content."
-                                  :flag true])
+  (let [[options args banner] (arguments args) 
         [to user repo milestone] args]
-    (if (and to user repo milestone)
-      (let [creds (join ":" (prompt [["Github username: "]
-                                     ["Github password: " :pass]]))
-            issues (get-issues user repo milestone creds)]
-        (if (map? issues)
-          (prn issues)
-          (let [email (email issues)]
+    (cond
+     (:help options) (println banner)
+     (and to user repo milestone)
+     (let [creds (join ":" (prompt [["Github username: "]
+                                    ["Github password: " :pass]]))
+           issues (get-issues user repo milestone creds)]
+       (if (map? issues)
+         (prn issues)
+         (let [email (email issues)]
            (if (:preview options)
-             (let [f (temp-file "updoc-email")]
-               (spit f email)
-               (println "Created file" (.getPath f)))
+             (println "Created file" (.getPath (doto (temp-file "updoc-email")
+                                                 (spit email)))) 
              (send-email to milestone email)))))
-      (println "Usage: updoc email user-or-organization repo milestone"))))
+     :else (println "Usage: updoc email user-or-organization repo milestone"))))

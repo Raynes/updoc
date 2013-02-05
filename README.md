@@ -45,7 +45,7 @@ view in your browser. When you want to actually send the email, just run the
 command again without the `-p` arg.
 
 `updoc` requires that `sendmail` or some similar equivalent program be available
-and configured to send email without extra information.cs
+and configured to send email without extra information.
 
 ## License
 

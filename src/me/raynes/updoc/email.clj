@@ -4,25 +4,23 @@
             [me.raynes.cegdown :refer [to-html]] 
             [clojure.string :as string]
             [postal.core :as mail])
-  (:require [me.raynes.laser :as l :refer [defdocument]]))
+  (:require [me.raynes.laser :as l :refer [defdocument defragment]]))
 
-(defn section [email node]
-  (let [body (:body email)]
-    (assoc node :content (into
-                          [(l/node :h2 :content (:title email))]
-                          (l/nodes (to-html (if (seq body)
-                                              body
-                                              "This issue has no description.")
-                                            [:fenced-code-blocks
-                                             :hardwraps
-                                             :autolinks]))))))
+(defn section [div issue]
+  (l/at div
+        (l/element= :a) (comp (l/attr :href (:html_url issue))
+                              (l/content (:title issue)))
+        (l/element= :p) (let [body (:body issue)]
+                          (l/replace (l/nodes (to-html (if (seq body)
+                                                         body 
+                                                         "This issue has no description.")
+                                                       [:fenced-code-blocks
+                                                        :hardwraps
+                                                        :autolinks]))))))
 
-(defdocument email
-  (resource "email.html")
-  [emails]
-  (l/element= :div) (fn [node]
-                     (for [email emails]
-                       (section email node))))
+(defdocument email (resource "email.html")
+  [issues]
+  (l/element= :div) #(map (partial section %) issues))
 
 (defn get-issues [user repo milestone auth]
   (let [milestone (-> (filter (comp #{milestone} :title)

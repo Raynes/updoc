@@ -4,8 +4,6 @@ This is a little tool with a very specific use case. It's for when you want to
 email somebody about the closed issues in a Github issue milestone. Ever wanted
 to do that? No? Well, whatever.
 
-Written for use at [Geni](http://geni.com).
-
 ## Usage
 
 This is an application. You've got two choices for getting it. The easiest is to
@@ -46,6 +44,10 @@ command again without the `-p` arg.
 
 `updoc` requires that `sendmail` or some similar equivalent program be available
 and configured to send email without extra information.
+
+## Why?
+
+Because we wanted it at [Geni](http://geni.com).
 
 ## License
 

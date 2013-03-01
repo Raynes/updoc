@@ -22,16 +22,22 @@
   [issues]
   (l/element= :div) #(map (partial section %) issues))
 
+(defn filter-milestone [milestone milestones]
+  (when (sequential? milestones)
+    (first (filter (comp #{milestone} :title) milestones))))
+
+(defn find-milestone [milestone user repo auth]
+  (letfn [(get-milestone [type]
+            (filter-milestone milestone (repo-milestones user repo {:state type
+                                                                    :auth auth})))]
+    (or (get-milestone :closed)
+        (get-milestone :open))))
+
 (defn get-issues [user repo milestone auth]
-  (let [milestone (-> (filter (comp #{milestone} :title)
-                              (repo-milestones user repo {:state :closed
-                                                          :auth auth}))
-                      (first)
-                      (:number))]
-    (issues user repo {:milestone milestone
-                       :state :closed
-                       :auth auth
-                       :all-pages true})))
+  (issues user repo {:milestone (:number (find-milestone milestone user repo auth))
+                     :state :closed
+                     :auth auth
+                     :all-pages true}))
 
 (defn send-email [to release text]
   (mail/send-message {:to [to]

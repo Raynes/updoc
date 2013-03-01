@@ -1,4 +1,4 @@
-(defproject updoc "0.1.0"
+(defproject updoc "0.1.1"
   :description "Send an email about closed issues in a Github milestone"
   :url "https://github.com/geni/updoc"
   :license {:name "Eclipse Public License"
